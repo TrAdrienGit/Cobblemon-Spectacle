@@ -1,0 +1,25 @@
+{
+	"required": true,
+	"package": "com.mystaria.spectacle.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"CameraMixin",
+		"GameRendererSpectacleMixin",
+		"BattleGuiSpectacleMixin",
+		"EntityGlowMixin",
+		"MusicManagerMixin",
+		"ClassicBattleInitializeHandlerMixin",
+		"ClassicBattleMakeChoiceHandlerMixin",
+		"ClassicBattleSwitchPokemonHandlerMixin",
+		"ClassicBattleFaintHandlerMixin",
+		"ClassicBattleMessageHandlerMixin",
+		"ClassicBattleEndHandlerMixin",
+		"ClassicBattleMusicHandlerMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

@@ -1,0 +1,69 @@
+plugins {
+	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
+	id 'maven-publish'
+}
+
+base {
+	archivesName = project.archives_base_name
+}
+
+repositories {
+	mavenCentral()
+	maven {
+		name = "Modrinth"
+		url = "https://api.modrinth.com/maven"
+		content { includeGroup "maven.modrinth" }
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings loom.officialMojangMappings()
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+	// Cobblemon 1.8.1 Fabric, by its Modrinth VERSION ID: the Fabric and NeoForge builds share the "1.8.1" version
+	// number on Modrinth's Maven proxy, the id resolves the Fabric jar (same as Phantasmon).
+	modImplementation "maven.modrinth:cobblemon:${project.cobblemon_version}"
+	// Cobblemon's API is Kotlin: javac needs the stdlib's classes, fabric-language-kotlin brings it at runtime.
+	compileOnly "org.jetbrains.kotlin:kotlin-stdlib:2.0.21"
+}
+
+processResources {
+	def version = project.version
+	inputs.property "version", version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 21
+}
+
+java {
+	withSourcesJar()
+
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
+
+jar {
+	def projectName = project.name
+	inputs.property "projectName", projectName
+
+	from("LICENSE") {
+		rename { "${it}_$projectName" }
+	}
+}
+
+// Phantasmon compiles against this mod: `./gradlew publishToMavenLocal` puts it in ~/.m2, where Phantasmon finds it.
+publishing {
+	publications {
+		create("mavenJava", MavenPublication) {
+			artifactId = project.archives_base_name
+			from components.java
+		}
+	}
+}

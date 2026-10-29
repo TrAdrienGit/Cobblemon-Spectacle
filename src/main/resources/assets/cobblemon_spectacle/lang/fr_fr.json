@@ -1,0 +1,16 @@
+{
+  "cobblemon_spectacle.buttons.camera_staged": "Caméra : cinéma",
+  "cobblemon_spectacle.buttons.camera_free": "Caméra : libre",
+  "cobblemon_spectacle.camera.on": "Caméra de combat : mise en scène",
+  "cobblemon_spectacle.camera.off": "Caméra de combat : libre (recliquez sur le bouton pour la mise en scène)",
+  "cobblemon_spectacle.intro.title": "Combat !",
+  "cobblemon_spectacle.intro.eyes_meet": "Vos regards se croisent… un combat Pokémon va commencer !",
+  "cobblemon_spectacle.intro.challenged": "Vous êtes défié par %s !",
+  "cobblemon_spectacle.intro.would_like": "%s veut se battre !",
+  "cobblemon_spectacle.intro.vs": "VS",
+  "cobblemon_spectacle.preview.unknown_intro": "[Spectacle] Intro inconnue : %s",
+  "cobblemon_spectacle.preview.unknown_effect": "[Spectacle] Effet inconnu : %s (mega, primal, zmove, tera)",
+  "cobblemon_spectacle.preview.no_pokemon": "[Spectacle] Aucun Pokémon à moins de 24 blocs.",
+  "cobblemon_spectacle.buttons.music": "♪ Musique suivante",
+  "cobblemon_spectacle.music.now_playing": "♪ %s"
+}

@@ -1,0 +1,27 @@
+{
+	"schemaVersion": 1,
+	"id": "cobblemon_spectacle",
+	"version": "${version}",
+	"name": "Cobblemon Spectacle",
+	"description": "Client-side staging of Cobblemon battles: cinematic battle camera, drawn intros, Mega Evolution, Z-Moves and Terastallization as set pieces.",
+	"authors": [
+		"Mystaria"
+	],
+	"license": "GPL-3.0-only",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"com.mystaria.spectacle.CobblemonSpectacle"
+		]
+	},
+	"mixins": [
+		"cobblemon_spectacle.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.18.1",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*",
+		"cobblemon": ">=1.8.1"
+	}
+}
