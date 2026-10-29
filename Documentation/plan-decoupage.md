@@ -69,7 +69,7 @@ Garde-fous de compatibilité :
 | S0 | **Faite** (2026-10-29) : compile, publiée dans le Maven local |
 | S1 | **Validée en jeu** par Adrien (2026-10-29), musiques comprises |
 | S2 | **Codée et déployée** (2026-10-29) : `classic/ClassicBattles`, `ClassicStage`, 6 mixins sur les gestionnaires de combat client de Cobblemon ; **validée en jeu** (2026-10-29, musique comprise) |
-| S3 | **Codée et déployée** (2026-10-29) : `config/SpectacleConfig` (par type de combat : caméra, intro, musique ; volume), écran de réglages (Mod Menu), menu des musiques propre à Spectacle (touche N, remplacé par celui de Phantasmon quand il est là), petit lecteur en combat (titre → liste déroulante, volume, suivant), README joueur ; **validation en jeu attendue** |
+| S3 | **Codée et déployée** (2026-10-29) : `config/SpectacleConfig` (par type de combat : caméra, intro, musique ; volume), écran de réglages (Mod Menu), menu des musiques propre à Spectacle (touche N, remplacé par celui de Phantasmon quand il est là), petit lecteur en combat (titre → liste déroulante, volume, suivant), README joueur, musiques de victoire et défaite en combat classique ; **validée en jeu** (2026-10-29) |
 
 ### S0 — Squelette (pas de changement pour les joueurs)
 

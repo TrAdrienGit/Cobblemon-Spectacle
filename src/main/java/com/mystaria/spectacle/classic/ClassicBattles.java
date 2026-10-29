@@ -47,6 +47,8 @@ public final class ClassicBattles {
 	private static ClassicStage stage;
 	/** The PvP intro took the screen from Cobblemon's battle screen: give it back once the intro is over. */
 	private static boolean reopenBattleScreen;
+	/** The victory / defeat music started: the battle's end lets it play out. */
+	private static boolean outcomePlayed;
 
 	private ClassicBattles() {
 	}
@@ -160,6 +162,7 @@ public final class ClassicBattles {
 	/** Disconnected: forget the battle (the director and the set pieces are cleared by the caller). */
 	public static void reset() {
 		stage = null;
+		outcomePlayed = false;
 		BattleMusic.setKind(null);
 		reopenBattleScreen = false;
 	}
@@ -169,7 +172,9 @@ public final class ClassicBattles {
 			BattleCameraDirector.stop();
 			BattleSpectacle.clear();
 			BattleCinematic.stop();
-			BattleMusic.stop();
+			if (!outcomePlayed) {
+				BattleMusic.stop(); // else the victory / defeat jingle ends on its own
+			}
 		}
 		reset();
 	}
@@ -193,12 +198,42 @@ public final class ClassicBattles {
 					BattleCameraDirector.onAction(List.of(user), target == null ? List.of() : List.of(target));
 				}
 			}
-			case "cobblemon.battle.mega" -> transform(pnxNamed(args, 0), "mega");
+			// Victory / defeat jingle: the winners' names, or who gave up.
+			case "cobblemon.battle.win" -> outcome(args.length > 0 && isOurs(args[0]));
+			case "cobblemon.battle.forfeit" -> outcome(args.length > 0 && !isOurs(args[0]));
+			case "cobblemon.battle.mega" ->transform(pnxNamed(args, 0), "mega");
 			case "cobblemon.battle.zpower" -> transform(pnxNamed(args, 0), Transformation.Z_POWER);
 			case "cobblemon.battle.terastallize" -> transform(pnxNamed(args, 0), Transformation.TERA_PREFIX + typeId(args.length > 1 ? args[1] : null));
 			default -> {
 			}
 		}
+	}
+
+	/** Plays the victory or defeat music, once; it then outlives the battle's end (10 s at most). */
+	private static void outcome(boolean won) {
+		ClientBattle battle = CobblemonClient.INSTANCE.getBattle();
+		if (outcomePlayed || battle == null || battle.getSpectating()) {
+			return;
+		}
+		outcomePlayed = true;
+		BattleMusic.play(won ? BattleMusic.Track.VICTORY : BattleMusic.Track.DEFEAT);
+	}
+
+	/** Whether the message argument names our side (one of our actors' names in it: "A & B" for teams). */
+	private static boolean isOurs(Object arg) {
+		String names = arg instanceof Component component ? component.getString() : String.valueOf(arg);
+		ClientBattle battle = CobblemonClient.INSTANCE.getBattle();
+		if (battle == null) {
+			return false;
+		}
+		for (ClientBattleActor actor : battle.getSide1().getActors()) {
+			for (String name : names.split(" & ")) {
+				if (name.trim().equals(actor.getDisplayName().getString())) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private static void transform(String pnx, String aspect) {
