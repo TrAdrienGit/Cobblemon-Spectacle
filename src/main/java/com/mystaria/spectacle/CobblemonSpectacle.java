@@ -37,9 +37,17 @@ public class CobblemonSpectacle implements ClientModInitializer {
 	private static final List<String> TYPES = List.of("normal", "fire", "water", "grass", "electric", "ice", "fighting",
 			"poison", "ground", "flying", "psychic", "bug", "rock", "ghost", "dragon", "dark", "steel", "fairy", "stellar");
 
+	/** The music menu (N, as in Phantasmon before the split); Phantasmon's own menu when it is installed. */
+	private static final net.minecraft.client.KeyMapping MUSIC_MENU = new net.minecraft.client.KeyMapping(
+			"key.cobblemon_spectacle.music_menu", org.lwjgl.glfw.GLFW.GLFW_KEY_N, "key.categories.cobblemon_spectacle");
+
 	@Override
 	public void onInitializeClient() {
+		net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper.registerKeyBinding(MUSIC_MENU);
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			while (MUSIC_MENU.consumeClick()) {
+				client.setScreen(com.mystaria.spectacle.api.SpectacleHooks.musicScreen(null));
+			}
 			BattleCinematic.tick();
 			BattleSpectacle.tick();
 			BattleMusic.tick();

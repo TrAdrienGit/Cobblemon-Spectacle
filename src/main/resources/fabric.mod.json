@@ -12,6 +12,9 @@
 	"entrypoints": {
 		"client": [
 			"com.mystaria.spectacle.CobblemonSpectacle"
+		],
+		"modmenu": [
+			"com.mystaria.spectacle.gui.SpectacleModMenu"
 		]
 	},
 	"mixins": [

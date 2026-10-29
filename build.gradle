@@ -27,6 +27,9 @@ dependencies {
 	modImplementation "maven.modrinth:cobblemon:${project.cobblemon_version}"
 	// Cobblemon's API is Kotlin: javac needs the stdlib's classes, fabric-language-kotlin brings it at runtime.
 	compileOnly "org.jetbrains.kotlin:kotlin-stdlib:2.0.21"
+
+	// Mod Menu: optional, only its API is compiled against (the "Configure" button → settings screen).
+	modCompileOnly "maven.modrinth:modmenu:11.0.3"
 }
 
 processResources {

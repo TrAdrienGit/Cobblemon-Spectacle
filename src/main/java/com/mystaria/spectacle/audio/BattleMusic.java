@@ -18,6 +18,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.valueproviders.ConstantFloat;
 
+import com.mystaria.spectacle.config.SpectacleConfig;
+
 /**
  * Battle music from a resource pack (Adrien 2026-10-05; part of Cobblemon Spectacle since 2026-10-29, D-37) — no
  * JSON to write: every {@code .ogg} found in {@code assets/cobblemon_spectacle/sounds/music/<folder>/} of any active
@@ -62,7 +64,33 @@ public final class BattleMusic {
 	private static Track resumeTrack;
 	private static Track resumeNext;
 
+	private static SpectacleConfig.Kind kind = SpectacleConfig.Kind.GHOST;
+
 	private BattleMusic() {
+	}
+
+	/** The track playing (looping or not), or null. */
+	public static Track track() {
+		return previewing ? null : track;
+	}
+
+	/** The file playing for {@link #track()}, or null. */
+	public static ResourceLocation current() {
+		return track() == null || playing == null || playing.isStopped() ? null : playing.file;
+	}
+
+	/**
+	 * In-battle player: plays this file of the current track now (instead of a random one); the track goes on as
+	 * usual afterwards (a loop picks the next one at random).
+	 */
+	public static void choose(ResourceLocation file) {
+		if (track() == null || file == null) {
+			return;
+		}
+		fadeOutCurrent();
+		lastFile = file;
+		playing = new MusicInstance(file, track.maxSeconds);
+		Minecraft.getInstance().getSoundManager().play(playing);
 	}
 
 	/** Plays {@code wanted} (fading the current music out), unless it is already playing. */
@@ -70,9 +98,26 @@ public final class BattleMusic {
 		play(wanted, null);
 	}
 
+	/**
+	 * Whose battle the music is for (the player's per-kind setting, {@link SpectacleConfig}): Spectacle's staging of
+	 * Cobblemon battles sets PvP / NPC while one runs; anything else (Phantasmon) is a Ghost battle.
+	 */
+	public static void setKind(SpectacleConfig.Kind battleKind) {
+		kind = battleKind == null ? SpectacleConfig.Kind.GHOST : battleKind;
+	}
+
+	/** Whether the player wants our music for the current kind of battle. */
+	public static boolean wanted() {
+		return SpectacleConfig.battle(kind).music;
+	}
+
 	/** Plays {@code wanted}, then {@code then} when it ends (if {@code wanted} has no file, {@code then} right away). */
 	public static void play(Track wanted, Track then) {
 		cancelPreview();
+		if (!wanted()) {
+			stop(); // music off for this kind of battle (settings)
+			return;
+		}
 		if (wanted == track && playing != null && !playing.isStopped()) {
 			return;
 		}
@@ -272,6 +317,8 @@ public final class BattleMusic {
 		private final int fadeAtTick;
 		private int ticks;
 		private boolean fadingOut;
+		/** 1 until the fade-out; the volume is this times the player's music volume ({@link SpectacleConfig}). */
+		private float fade = 1f;
 
 		MusicInstance(ResourceLocation file, int maxSeconds) {
 			super(SoundEvent.createVariableRangeEvent(file), SoundSource.MUSIC, SoundInstance.createUnseededRandom());
@@ -279,7 +326,7 @@ public final class BattleMusic {
 			this.looping = false;
 			this.relative = true;
 			this.attenuation = SoundInstance.Attenuation.NONE;
-			this.volume = 1f;
+			this.volume = Math.max(0.001f, SpectacleConfig.musicVolume());
 			this.fadeAtTick = maxSeconds <= 0 ? 0 : Math.max(1, Math.round((maxSeconds - FADE_SECONDS) * 20));
 		}
 
@@ -301,12 +348,14 @@ public final class BattleMusic {
 				fadingOut = true;
 			}
 			if (fadingOut) {
-				volume -= 1f / (FADE_SECONDS * 20f);
-				if (volume <= 0f) {
-					volume = 0f;
+				fade -= 1f / (FADE_SECONDS * 20f);
+				if (fade <= 0f) {
+					fade = 0f;
 					stop();
 				}
 			}
+			// Never quite 0: Minecraft drops a sound started at volume 0, and the loop would restart it every second.
+			volume = Math.max(0.001f, fade * SpectacleConfig.musicVolume());
 		}
 	}
 }

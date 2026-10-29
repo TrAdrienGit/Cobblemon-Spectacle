@@ -28,6 +28,7 @@ import com.mystaria.spectacle.audio.BattleMusic;
 import com.mystaria.spectacle.battle.BattleCameraDirector;
 import com.mystaria.spectacle.battle.BattleCinematic;
 import com.mystaria.spectacle.battle.BattleSpectacle;
+import com.mystaria.spectacle.config.SpectacleConfig;
 
 /**
  * Cobblemon's own battles staged (phase S2, Adrien 2026-10-29): player against player and against NPC trainers, not
@@ -65,11 +66,14 @@ public final class ClassicBattles {
 			if (actors.stream().anyMatch(actor -> actor.getType() == ActorType.WILD)) {
 				return; // Adrien: wild battles stay as they are
 			}
-			stage = new ClassicStage(packet.getBattleId());
-			BattleCameraDirector.start(stage);
-			ClientBattle battle = CobblemonClient.INSTANCE.getBattle();
 			boolean pvp = actors.stream().allMatch(actor -> actor.getType() == ActorType.PLAYER);
-			if (pvp && battle != null && !battle.getSpectating() && !battle.getSide2().getActors().isEmpty()) {
+			SpectacleConfig.Kind kind = pvp ? SpectacleConfig.Kind.PVP : SpectacleConfig.Kind.NPC;
+			stage = new ClassicStage(packet.getBattleId());
+			BattleCameraDirector.start(stage, kind);
+			BattleMusic.setKind(kind);
+			ClientBattle battle = CobblemonClient.INSTANCE.getBattle();
+			if (pvp && SpectacleConfig.battle(kind).intro && battle != null && !battle.getSpectating()
+					&& !battle.getSide2().getActors().isEmpty()) {
 				ClientBattleActor opponent = battle.getSide2().getActors().get(0);
 				int own = CobblemonClient.INSTANCE.getStorage().getParty().getSlots().stream().filter(java.util.Objects::nonNull)
 						.mapToInt(pokemon -> 1).sum();
@@ -123,10 +127,10 @@ public final class ClassicBattles {
 	 * music for it; without one, Cobblemon's plays as usual.
 	 */
 	public static boolean silencesCobblemonMusic() {
-		if (!ours()) {
-			return false;
+		if (!ours() || !BattleMusic.wanted()) {
+			return false; // music off for this kind of battle: Cobblemon's own plays
 		}
-		boolean replaced = BattleMusic.available(BattleMusic.Track.BATTLE) || BattleMusic.available(BattleMusic.Track.INTRO);
+		boolean replaced =BattleMusic.available(BattleMusic.Track.BATTLE) || BattleMusic.available(BattleMusic.Track.INTRO);
 		if (replaced) {
 			com.cobblemon.mod.common.client.sound.BattleMusicController.INSTANCE.endMusic();
 		}
@@ -156,6 +160,7 @@ public final class ClassicBattles {
 	/** Disconnected: forget the battle (the director and the set pieces are cleared by the caller). */
 	public static void reset() {
 		stage = null;
+		BattleMusic.setKind(null);
 		reopenBattleScreen = false;
 	}
 

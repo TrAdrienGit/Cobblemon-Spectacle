@@ -21,6 +21,8 @@ public final class SpectacleHooks {
 	private static BiFunction<ClientLevel, UUID, Player> playerResolver = (level, uuid) -> null;
 	private static IntPredicate glowKeeper = entityId -> false;
 	private static BooleanSupplier foreignPacketCheck = () -> false;
+	private static java.util.function.Function<net.minecraft.client.gui.screens.Screen, net.minecraft.client.gui.screens.Screen> musicScreen =
+			com.mystaria.spectacle.gui.MusicScreen::new;
 	private static final List<BattleButton> buttons = new ArrayList<>();
 
 	private SpectacleHooks() {
@@ -66,6 +68,18 @@ public final class SpectacleHooks {
 
 	public static boolean handlingForeignPacket() {
 		return foreignPacketCheck.getAsBoolean();
+	}
+
+	/**
+	 * The music menu opened by Spectacle's music key and settings screen: Spectacle's own by default; Phantasmon gives
+	 * its own (same settings and files, Phantasmon's look).
+	 */
+	public static void setMusicScreen(java.util.function.Function<net.minecraft.client.gui.screens.Screen, net.minecraft.client.gui.screens.Screen> factory) {
+		musicScreen = factory;
+	}
+
+	public static net.minecraft.client.gui.screens.Screen musicScreen(net.minecraft.client.gui.screens.Screen parent) {
+		return musicScreen.apply(parent);
 	}
 
 	public static void addButton(BattleButton button) {

@@ -72,6 +72,12 @@ public final class BattleCameraDirector {
 
 	/** Battle scene built (its first packet): the director takes over once the send-out shots are over. */
 	public static void start(BattleStage battleStage) {
+		start(battleStage, com.mystaria.spectacle.config.SpectacleConfig.Kind.GHOST);
+	}
+
+	/** Same, for this kind of battle: the camera starts staged or free as the player set it (settings screen). */
+	public static void start(BattleStage battleStage, com.mystaria.spectacle.config.SpectacleConfig.Kind kind) {
+		enabled = com.mystaria.spectacle.config.SpectacleConfig.battle(kind).stagedCamera;
 		stage = battleStage;
 		battleActive = battleStage != null;
 		shot = null;
