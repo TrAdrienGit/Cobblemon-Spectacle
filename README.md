@@ -60,3 +60,7 @@ Minecraft). Les morceaux décochés sont dans `config/cobblemon_spectacle-music.
 - Plan et état des phases : [`Documentation/plan-decoupage.md`](Documentation/plan-decoupage.md).
 - Règle : toute évolution garde les combats Phantasmon intacts. Phantasmon n'utilise que l'API publique (paquet
   `api` et méthodes publiques de `BattleCinematic`, `BattleCameraDirector`, `BattleSpectacle`).
+
+## License
+
+Apache License 2.0 — see [`LICENSE`](./LICENSE). Free to use, modify and redistribute; forks and redistributions must keep [`NOTICE`](./NOTICE) and credit the original author.
