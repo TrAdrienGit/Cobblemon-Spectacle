@@ -14,7 +14,7 @@ import com.mystaria.spectacle.config.SpectacleConfig;
 /**
  * Spectacle's settings (phase S3), opened by Mod Menu: per kind of battle — Ghost (Phantasmon), PvP, NPC trainer —
  * the camera staged or free at the start, the intro (not for Ghost battles: their intro keeps both players in step),
- * our music; the music volume and the music menu. Saved on close.
+ * our music; the music volume and the music menu; the trainer's animation profile. Saved on close.
  */
 public final class SettingsScreen extends Screen {
 
@@ -50,8 +50,10 @@ public final class SettingsScreen extends Screen {
 		addRenderableWidget(new MusicScreen.VolumeSlider(center - 154, y + 8, 150, 20));
 		addRenderableWidget(Button.builder(Component.translatable("cobblemon_spectacle.settings.tracks"),
 				b -> minecraft.setScreen(SpectacleHooks.musicScreen(this))).bounds(center + 4, y + 8, 150, 20).build());
+		addRenderableWidget(Button.builder(Component.translatable("cobblemon_spectacle.settings.profile"),
+				b -> minecraft.setScreen(new TrainerProfileScreen(this))).bounds(center - 154, y + 32, 308, 20).build());
 		addRenderableWidget(Button.builder(Component.translatable("gui.done"), b -> onClose())
-				.bounds(center - 50, y + 40, 100, 20).build());
+				.bounds(center - 50, y + 64, 100, 20).build());
 	}
 
 	@Override

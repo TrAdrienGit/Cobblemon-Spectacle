@@ -12,6 +12,9 @@ interface EmotePlayer {
 	/** Whether the animation last played on {@code player} is still running (a loop always is). */
 	boolean playing(Player player);
 
+	/** The animation names a namespace has (Spectacle's own and those resource packs add). */
+	java.util.Set<String> names(String namespace);
+
 	/** Fades back to the player's own movements. */
 	void stop(Player player);
 }

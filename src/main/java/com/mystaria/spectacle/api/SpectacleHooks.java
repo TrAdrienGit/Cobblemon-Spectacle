@@ -24,6 +24,7 @@ public final class SpectacleHooks {
 	private static java.util.function.Function<net.minecraft.client.gui.screens.Screen, net.minecraft.client.gui.screens.Screen> musicScreen =
 			com.mystaria.spectacle.gui.MusicScreen::new;
 	private static final List<BattleButton> buttons = new ArrayList<>();
+	private static java.util.function.BiFunction<UUID, String, String> trainerProfiles = (uuid, moment) -> null;
 
 	private SpectacleHooks() {
 	}
@@ -80,6 +81,19 @@ public final class SpectacleHooks {
 
 	public static net.minecraft.client.gui.screens.Screen musicScreen(net.minecraft.client.gui.screens.Screen parent) {
 		return musicScreen.apply(parent);
+	}
+
+	/**
+	 * Other trainers' animation profiles (phase E3): Phantasmon gives each player's choice for a moment id
+	 * ({@code guard}, {@code send_out}...), or null for the default. The local player's own comes from Spectacle's
+	 * settings.
+	 */
+	public static void setTrainerProfiles(java.util.function.BiFunction<UUID, String, String> profiles) {
+		trainerProfiles = profiles;
+	}
+
+	public static String trainerAnimation(UUID trainer, String moment) {
+		return trainerProfiles.apply(trainer, moment);
 	}
 
 	public static void addButton(BattleButton button) {

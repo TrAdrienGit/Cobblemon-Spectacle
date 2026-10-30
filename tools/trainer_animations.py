@@ -110,7 +110,7 @@ ANIMATIONS = [
     ], loop=True),
 
     # The head turns against the torso: the eyes stay on the field.
-    animation("throw_overhand", "Sends a Pokémon out: the arm swings back, a step in, overhand throw, follow-through.", [
+    animation("send_out_overhand", "Sends a Pokémon out: the arm swings back, a step in, overhand throw, follow-through.", [
         (0, "INOUTSINE", merge(neutral(), GUARD)),
         (7, "OUTQUAD", {"torso": {"pitch": 0.02, "yaw": 0.35}, "head": {"pitch": -0.02, "yaw": -0.35},
                         "rightArm": {"pitch": 0.8, "roll": 0.1, "bend": ELBOW * 0.6},
@@ -135,7 +135,7 @@ ANIMATIONS = [
         (26, "INOUTSINE", GUARD),
     ]),
 
-    animation("command_point", "Orders a move: the arm cocks, then snaps out pointing at the opponent.", [
+    animation("attack_point", "Orders a move: the arm cocks, then snaps out pointing at the opponent.", [
         (0, "INOUTSINE", merge(neutral(), GUARD)),
         (3, "OUTQUAD", {"torso": {"yaw": 0.15}, "head": {"yaw": -0.15},
                         "rightArm": {"pitch": -0.3, "bend": ELBOW * 1.3}}),
@@ -170,6 +170,149 @@ ANIMATIONS = [
         (54, "INOUTSINE", neutral()),
     ]),
 ]
+
+# Variants (phase E2): a moment's variants are named <moment>_<style>; the profile screen lists them.
+POISED = {
+    "torso": {"pitch": -0.02, "yaw": 0.12, "roll": 0},
+    "head": {"pitch": 0.02, "yaw": -0.12, "roll": 0},
+    "rightLeg": {"x": -2.0, "z": 0.1, "pitch": -0.12, "bend": KNEE * 0.12},
+    "leftLeg": {"x": 2.1, "z": -0.1, "pitch": 0.15, "roll": -0.05, "bend": KNEE * 0.05},
+    "rightArm": {"pitch": -0.55, "yaw": 0, "roll": 0.1, "bend": ELBOW * 1.2},
+    "leftArm": {"pitch": 0.15, "yaw": 0, "roll": -0.5, "bend": ELBOW * 1.5},
+}
+RELAXED = {
+    "torso": {"pitch": 0, "yaw": 0, "roll": 0.02},
+    "head": {"pitch": 0, "yaw": 0, "roll": -0.02},
+    "rightLeg": {"x": -2.0, "z": 0.1, "pitch": -0.08, "bend": KNEE * 0.1},
+    "leftLeg": {"x": 2.0, "z": -0.1, "pitch": 0.08, "bend": KNEE * 0.06},
+    "rightArm": {"pitch": -0.15, "yaw": 0, "roll": 0.08, "bend": ELBOW * 0.35},
+    "leftArm": {"pitch": -0.1, "yaw": 0, "roll": -0.08, "bend": ELBOW * 0.3},
+}
+
+ANIMATIONS += [
+    animation("guard_poised", "Guard: one hand on the hip, the other fist ready, weight on the back foot.", [
+        (0, "INOUTSINE", merge(neutral(), POISED)),
+        (20, "INOUTSINE", {"torso": {"roll": 0.03}, "head": {"yaw": -0.08, "roll": -0.03},
+                           "rightArm": {"pitch": -0.6, "bend": ELBOW * 1.3}}),
+        (40, "INOUTSINE", POISED),
+        (60, "INOUTSINE", {"head": {"yaw": -0.16}, "rightArm": {"pitch": -0.5}}),
+        (80, "INOUTSINE", POISED),
+    ], loop=True),
+
+    animation("guard_relaxed", "Guard: calm, arms loose, weight going slowly from one foot to the other.", [
+        (0, "INOUTSINE", merge(neutral(), RELAXED)),
+        (25, "INOUTSINE", {"torso": {"roll": -0.03}, "head": {"yaw": 0.08, "roll": 0.03},
+                           "rightLeg": {"bend": KNEE * 0.18}, "leftLeg": {"bend": KNEE * 0.02}}),
+        (50, "INOUTSINE", RELAXED),
+        (75, "INOUTSINE", {"torso": {"roll": 0.04}, "head": {"yaw": -0.06, "roll": -0.04},
+                           "rightLeg": {"bend": KNEE * 0.04}, "leftLeg": {"bend": KNEE * 0.16}}),
+        (100, "INOUTSINE", RELAXED),
+    ], loop=True),
+
+    animation("send_out_underhand", "Sends a Pokemon out: a low swing, the ball rolled out like a bowling throw.", [
+        (0, "INOUTSINE", merge(neutral(), GUARD)),
+        (7, "OUTQUAD", {"torso": {"pitch": -0.05, "yaw": 0.25}, "head": {"pitch": 0.05, "yaw": -0.25},
+                        "rightArm": {"pitch": 0.9, "roll": 0.05, "bend": ELBOW * 0.15},
+                        "leftArm": {"pitch": -0.7, "bend": ELBOW * 0.6},
+                        "rightLeg": {"pitch": 0.2, "bend": KNEE * 0.45}, "leftLeg": {"pitch": -0.3, "bend": KNEE * 0.5}}),
+        (12, "INQUAD", {"torso": {"pitch": -0.25, "yaw": -0.1}, "head": {"pitch": 0.25, "yaw": 0.1},
+                        "rightArm": {"pitch": -1.1, "bend": ELBOW * 0.05},
+                        "rightLeg": {"pitch": 0.3, "bend": KNEE * 0.3}, "leftLeg": {"pitch": -0.35, "bend": KNEE * 0.6}}),
+        (17, "OUTQUAD", {"torso": {"pitch": -0.18}, "head": {"pitch": 0.18}, "rightArm": {"pitch": -1.4}}),
+        (30, "INOUTSINE", GUARD),
+    ]),
+
+    animation("send_out_spin", "Sends a Pokemon out: a twirl that turns the back to the field, unwinding into the throw.", [
+        (0, "INOUTSINE", merge(neutral(), GUARD)),
+        (4, "INQUAD", {"torso": {"yaw": 0.3}, "rightArm": {"pitch": -0.2, "roll": 1.1, "bend": ELBOW * 0.2},
+                       "leftArm": {"pitch": -0.2, "roll": -0.9, "bend": ELBOW * 0.3}}),
+        (12, "INOUTSINE", {"torso": {"yaw": 2.6}, "head": {"yaw": 0.3}}),
+        (18, "OUTQUAD", {"torso": {"yaw": -0.25, "pitch": -0.1}, "head": {"pitch": 0.1, "yaw": 0.25},
+                         "rightArm": {"pitch": -2.3, "roll": 0, "bend": ELBOW * 0.1},
+                         "leftArm": {"pitch": -0.4, "roll": -0.1, "bend": ELBOW * 0.6}}),
+        (22, "OUTQUAD", {"torso": {"yaw": -0.35, "pitch": -0.12}, "head": {"yaw": 0.35},
+                         "rightArm": {"pitch": -1.0, "yaw": -0.3}}),
+        (32, "INOUTSINE", GUARD),
+    ]),
+
+    animation("recall_overhead", "Calls a Pokemon back: the ball raised high, then brought down to the chest.", [
+        (0, "INOUTSINE", merge(neutral(), GUARD)),
+        (6, "OUTQUAD", {"head": {"pitch": -0.15}, "rightArm": {"pitch": -2.7, "roll": -0.1, "bend": ELBOW * 0.1},
+                        "leftArm": {"pitch": -0.3, "bend": ELBOW * 0.8}}),
+        (15, "INOUTSINE", {"rightArm": {"pitch": -2.6}}),
+        (21, "INQUAD", {"head": {"pitch": 0.04}, "rightArm": {"pitch": -0.6, "roll": 0.12, "bend": ELBOW * 1.3}}),
+        (28, "INOUTSINE", GUARD),
+    ]),
+
+    animation("attack_sweep", "Orders a move: the arm sweeps across, from the chest out to the side.", [
+        (0, "INOUTSINE", merge(neutral(), GUARD)),
+        (4, "OUTQUAD", {"torso": {"yaw": -0.3}, "head": {"yaw": 0.3},
+                        "rightArm": {"pitch": -1.4, "yaw": 0.7, "bend": ELBOW * 0.9}}),
+        (9, "OUTBACK", {"torso": {"yaw": 0.25}, "head": {"yaw": -0.25},
+                        "rightArm": {"pitch": -1.45, "yaw": -0.2, "roll": 0.7, "bend": 0},
+                        "leftArm": {"pitch": -0.3, "bend": ELBOW * 1.1}}),
+        (19, "INOUTSINE", {"rightArm": {"roll": 0.65}}),
+        (26, "INOUTSINE", GUARD),
+    ]),
+
+    animation("attack_fist", "Orders a move: a fist thrust forward, weight on the front foot.", [
+        (0, "INOUTSINE", merge(neutral(), GUARD)),
+        (3, "OUTQUAD", {"torso": {"yaw": 0.2}, "head": {"yaw": -0.2},
+                        "rightArm": {"pitch": -0.4, "bend": ELBOW * 1.6}}),
+        (6, "OUTBACK", {"torso": {"pitch": -0.1, "yaw": -0.2}, "head": {"pitch": 0.1, "yaw": 0.2},
+                        "rightArm": {"pitch": -1.5, "bend": ELBOW * 0.15},
+                        "leftArm": {"pitch": -0.3, "bend": ELBOW * 1.4},
+                        "rightLeg": {"pitch": -0.32, "bend": KNEE * 0.45}, "leftLeg": {"pitch": 0.28}}),
+        (16, "INOUTSINE", {"rightArm": {"pitch": -1.45}}),
+        (23, "INOUTSINE", GUARD),
+    ]),
+
+    animation("victory_wave", "Wins: one arm raised high, waving to the crowd.", [
+        (0, "INOUTSINE", merge(neutral(), GUARD)),
+        (6, "OUTBACK", {"torso": {"pitch": 0.02}, "head": {"pitch": -0.2},
+                        "rightArm": {"pitch": -2.9, "yaw": 0, "roll": -0.3, "bend": ELBOW * 0.2},
+                        "leftArm": {"pitch": -0.1, "roll": -0.1, "bend": ELBOW * 0.3},
+                        "rightLeg": {"pitch": 0, "bend": 0}, "leftLeg": {"pitch": 0, "bend": 0}}),
+        (11, "INOUTSINE", {"rightArm": {"roll": 0.2}}),
+        (16, "INOUTSINE", {"rightArm": {"roll": -0.35}}),
+        (21, "INOUTSINE", {"rightArm": {"roll": 0.2}}),
+        (26, "INOUTSINE", {"rightArm": {"roll": -0.3}}),
+        (34, "INOUTSINE", {"rightArm": {"roll": -0.1}}),
+        (42, "INOUTSINE", neutral()),
+    ]),
+
+    animation("victory_jump", "Wins: a jump for joy, both fists up.", [
+        (0, "INOUTSINE", merge(neutral(), GUARD)),
+        (5, "OUTQUAD", {"torso": {"pitch": -0.05}, "rightArm": {"pitch": 0.3, "bend": ELBOW * 0.6},
+                        "leftArm": {"pitch": 0.3, "bend": ELBOW * 0.6},
+                        "rightLeg": {"pitch": -0.1, "bend": KNEE * 0.6}, "leftLeg": {"pitch": 0.1, "bend": KNEE * 0.6}}),
+        (10, "OUTQUAD", {"torso": {"y": 0.35, "pitch": 0.03}, "head": {"pitch": -0.3},
+                         "rightArm": {"pitch": -2.95, "roll": -0.25, "bend": ELBOW * 0.3},
+                         "leftArm": {"pitch": -2.95, "roll": 0.25, "bend": ELBOW * 0.3},
+                         "rightLeg": {"pitch": -0.05, "bend": KNEE * 0.4}, "leftLeg": {"pitch": 0.15, "bend": KNEE * 0.7}}),
+        (15, "INQUAD", {"torso": {"y": 0}, "rightLeg": {"bend": KNEE * 0.5}, "leftLeg": {"bend": KNEE * 0.5}}),
+        (20, "OUTQUAD", {"rightLeg": {"pitch": 0, "bend": KNEE * 0.1}, "leftLeg": {"pitch": 0, "bend": KNEE * 0.1},
+                         "rightArm": {"pitch": -2.7}, "leftArm": {"pitch": -2.7}}),
+        (34, "INOUTSINE", {"rightArm": {"pitch": -2.6}, "leftArm": {"pitch": -2.6}}),
+        (42, "INOUTSINE", neutral()),
+    ]),
+
+    animation("defeat_headshake", "Loses: a hand on the head, shaking it in disbelief.", [
+        (0, "INOUTSINE", merge(neutral(), GUARD)),
+        (8, "OUTQUAD", {"torso": {"pitch": -0.06}, "head": {"pitch": 0.3},
+                        "rightArm": {"pitch": -2.5, "yaw": -0.4, "roll": 0, "bend": ELBOW * 1.6},
+                        "leftArm": {"pitch": -0.15, "roll": -0.05, "bend": ELBOW * 0.2},
+                        "rightLeg": {"pitch": -0.05, "bend": KNEE * 0.05}, "leftLeg": {"pitch": 0.05, "bend": KNEE * 0.05}}),
+        (13, "INOUTSINE", {"head": {"yaw": 0.25}}),
+        (18, "INOUTSINE", {"head": {"yaw": -0.25}}),
+        (23, "INOUTSINE", {"head": {"yaw": 0.2}}),
+        (28, "INOUTSINE", {"head": {"yaw": -0.15}}),
+        (34, "INOUTSINE", {"head": {"yaw": 0, "pitch": 0.45}}),
+        (46, "INOUTSINE", {"head": {"pitch": 0.5}}),
+        (56, "INOUTSINE", neutral()),
+    ]),
+]
+
 
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)

@@ -52,12 +52,19 @@ public final class TrainerEmotes {
 		}
 	}
 
-	/** Each moment's animation until the trainers' animation profiles (phase E2). */
+	private static final String NAMESPACE = "cobblemon_spectacle";
+
+	/**
+	 * Each moment's default animation. A moment's variants are every animation named {@code <moment>_<style>}
+	 * ({@code send_out_spin}...): Spectacle's own and any a resource pack adds. A trainer's animation profile (phase
+	 * E2) picks one per moment: the local player's from Spectacle's settings, the others' from
+	 * {@link SpectacleHooks#trainerAnimation} (Phantasmon, phase E3).
+	 */
 	private static final Map<Moment, String> DEFAULTS = Map.of(
 			Moment.GUARD, "guard_ready",
-			Moment.SEND_OUT, "throw_overhand",
+			Moment.SEND_OUT, "send_out_overhand",
 			Moment.RECALL, "recall_reach",
-			Moment.ATTACK, "command_point",
+			Moment.ATTACK, "attack_point",
 			Moment.VICTORY, "victory_fists",
 			Moment.DEFEAT, "defeat_slump");
 
@@ -68,6 +75,10 @@ public final class TrainerEmotes {
 		Moment playing;
 		/** Ticks left before stopping (a preview of the guard), or -1. */
 		int stopIn = -1;
+		/** The battle's uuid for this trainer (a Hub avatar's entity may have another). */
+		UUID uuid;
+		/** The profile screen's preview: this animation, replayed whenever it ends, until stopped. */
+		String looped;
 	}
 
 	private static final EmotePlayer PLAYER = create();
@@ -90,6 +101,57 @@ public final class TrainerEmotes {
 		} catch (ReflectiveOperationException | LinkageError ex) {
 			LOG.warn("playerAnimator found but unusable: the trainers' emotes are off", ex);
 			return null;
+		}
+	}
+
+	/** {@code moment}'s variants, default first then by name. */
+	public static List<String> variants(Moment moment) {
+		List<String> list = new java.util.ArrayList<>();
+		list.add(DEFAULTS.get(moment));
+		if (PLAYER != null) {
+			PLAYER.names(NAMESPACE).stream().filter(name -> name.startsWith(moment.id() + "_") && !list.contains(name))
+					.sorted().forEach(list::add);
+		}
+		return list;
+	}
+
+	/** The animation {@code trainer} plays for {@code moment}: its profile's choice when it exists, else the default. */
+	public static String animationFor(UUID trainer, Moment moment) {
+		Minecraft mc = Minecraft.getInstance();
+		String chosen = mc.player != null && mc.player.getUUID().equals(trainer)
+				? com.mystaria.spectacle.config.SpectacleConfig.trainerAnimation(moment.id())
+				: SpectacleHooks.trainerAnimation(trainer, moment.id());
+		if (chosen != null && chosen.startsWith(moment.id() + "_") && PLAYER != null && PLAYER.names(NAMESPACE).contains(chosen)) {
+			return chosen;
+		}
+		return DEFAULTS.get(moment);
+	}
+
+	/** The profile screen: the local player plays {@code animation} over and over until {@link #stopPreview}. */
+	public static void previewLoop(String animation) {
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.player == null || PLAYER == null) {
+			return;
+		}
+		Trainer state = TRAINERS.computeIfAbsent(mc.player.getUUID(), ignored -> new Trainer());
+		state.queue.clear();
+		state.stopIn = -1;
+		state.looped = animation;
+		state.playing = null;
+		PLAYER.play(mc.player, ResourceLocation.fromNamespaceAndPath(NAMESPACE, animation));
+	}
+
+	/** The profile screen closed: the local player stops (unless in a battle, where the guard goes on). */
+	public static void stopPreview() {
+		Minecraft mc = Minecraft.getInstance();
+		Trainer state = mc.player == null ? null : TRAINERS.get(mc.player.getUUID());
+		if (state == null || state.looped == null) {
+			return;
+		}
+		state.looped = null;
+		if (!inBattle || state.opponents.isEmpty()) {
+			PLAYER.stop(mc.player);
+			TRAINERS.remove(mc.player.getUUID());
 		}
 	}
 
@@ -197,9 +259,17 @@ public final class TrainerEmotes {
 		while (it.hasNext()) {
 			Map.Entry<UUID, Trainer> entry = it.next();
 			Trainer state = entry.getValue();
+			state.uuid = entry.getKey();
 			Player player = SpectacleHooks.player(mc.level, entry.getKey());
 			if (player == null) {
 				continue; // out of sight for now: picked up again when seen
+			}
+			if (state.looped != null) {
+				// Ticked even with a screen open: the profile screen shows it.
+				if (!PLAYER.playing(player)) {
+					PLAYER.play(player, ResourceLocation.fromNamespaceAndPath(NAMESPACE, state.looped));
+				}
+				continue;
 			}
 			if (state.stopIn > 0 && --state.stopIn == 0) {
 				PLAYER.stop(player);
@@ -226,7 +296,7 @@ public final class TrainerEmotes {
 
 	private static void play(Player player, Trainer state, Moment moment) {
 		state.playing = moment;
-		ResourceLocation id = ResourceLocation.fromNamespaceAndPath("cobblemon_spectacle", DEFAULTS.get(moment));
+		ResourceLocation id = ResourceLocation.fromNamespaceAndPath(NAMESPACE, animationFor(state.uuid, moment));
 		boolean played = PLAYER.play(player, id);
 		if (!played && MISSING.add(id.toString())) {
 			LOG.warn("Trainer animation {} not found", id);

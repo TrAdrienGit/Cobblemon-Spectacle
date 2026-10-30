@@ -41,6 +41,11 @@ final class PlayerAnimatorEmotes implements EmotePlayer {
 	}
 
 	@Override
+	public java.util.Set<String> names(String namespace) {
+		return PlayerAnimationRegistry.getModAnimations(namespace).keySet();
+	}
+
+	@Override
 	public boolean playing(Player player) {
 		ModifierLayer<IAnimation> layer = player instanceof AbstractClientPlayer client ? layers.get(client) : null;
 		return layer != null && layer.getAnimation() != null && layer.getAnimation().isActive();

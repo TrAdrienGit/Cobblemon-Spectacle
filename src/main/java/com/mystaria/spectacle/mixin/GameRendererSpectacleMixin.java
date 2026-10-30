@@ -37,6 +37,14 @@ public abstract class GameRendererSpectacleMixin {
 		}
 	}
 
+	/** The cinema camera (battle shots, intro, set pieces) never shows the first-person hand (Adrien 2026-10-30). */
+	@Inject(method = "renderItemInHand", at = @At("HEAD"), cancellable = true)
+	private void spectacle$noHand(Camera camera, float partialTick, org.joml.Matrix4f projection, CallbackInfo ci) {
+		if (com.mystaria.spectacle.battle.BattleCinematic.cameraTaken()) {
+			ci.cancel();
+		}
+	}
+
 	@Inject(method = "render", at = @At("TAIL"))
 	private void spectacle$spectacleOverlay(DeltaTracker deltaTracker, boolean renderLevel, CallbackInfo ci) {
 		if (!BattleSpectacle.playing()) {

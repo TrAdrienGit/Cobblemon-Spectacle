@@ -44,6 +44,7 @@ public abstract class CameraMixin {
 				pose = spectacle;
 			}
 		}
+		BattleCinematic.setCameraTaken(pose != null);
 		if (pose != null) {
 			setRotation(pose.yaw(), pose.pitch());
 			setPosition(pose.position().x, pose.position().y, pose.position().z);

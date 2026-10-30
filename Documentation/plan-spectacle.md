@@ -20,7 +20,7 @@
 | Phase | Contenu | Statut |
 |---|---|---|
 | E1 | Emotes : moteur (playerAnimator, facultatif), garde d'attente et moments joués automatiquement (lancer, rappel — un échange = rappel puis lancer —, attaque, victoire, défaite), une animation par moment, `/spectacle preview emote <moment>` ; dresseurs tournés vers l'adversaire | validé 2026-10-30 |
-| E2 | Profil d'animation : plusieurs variantes par moment, écran de choix avec aperçu | à faire |
+| E2 | Profil d'animation : variantes `<moment>_<style>` (3 gardes, 3 lancers, 2 rappels, 3 attaques, 3 victoires, 2 défaites ; un pack de ressources peut en ajouter), écran « Profil d'animation du dresseur » (réglages de Spectacle) avec aperçu en boucle sur son propre modèle, choix enregistré dans `config/cobblemon_spectacle.json`, `SpectacleHooks.setTrainerProfiles` pour les autres dresseurs | validé 2026-10-30 |
 | E3 | Phantasmon : profils envoyés au backend, ceux des autres dresseurs (adversaire, spectateurs, avatars) récupérés | à faire |
 | A1 | Ambiances : système (lumière, teinte du ciel, particules, effets aux moments forts, musique facultative), réglage local, API d'ambiance imposée | à faire |
 | A2 | Ambiances de départ : disco, nature, nuit (puis d'autres, façon stades de Battle Revolution) | à faire |

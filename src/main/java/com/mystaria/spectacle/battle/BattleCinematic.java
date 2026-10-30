@@ -301,6 +301,8 @@ public final class BattleCinematic {
 	private static CameraPose eyesMeetShot(ClientLevel level, Player self, float partialTick, long elapsed) {
 		Vec3 selfEye = self.getEyePosition(partialTick);
 		Player opponent = com.mystaria.spectacle.api.SpectacleHooks.player(level, opponentUuid);
+		keepVisible(self);
+		keepVisible(opponent);
 		float push = 1.08f - 0.08f * Math.min(1f, elapsed / (float) EYES_MEET_END);
 		if (opponent == null) {
 			Vec3 forward = horizontal(self.getViewVector(partialTick));
@@ -313,11 +315,31 @@ public final class BattleCinematic {
 		double gap = axis.length();
 		Vec3 direction = gap < 1.0E-3 ? horizontal(self.getViewVector(partialTick)) : axis.scale(1 / gap);
 		Vec3 side = new Vec3(-direction.z, 0, direction.x);
-		double distance = Mth.clamp(gap * 0.85, 3.0, 10.0) * push;
-		Vec3 position = middle.add(side.scale(distance)).add(0, 0.5, 0);
-		if (solid(level, position)) {
-			Vec3 other = middle.add(side.scale(-distance)).add(0, 0.5, 0);
-			position = solid(level, other) ? middle.add(side.scale(2.0)).add(0, 0.5, 0) : other;
+		// Far enough back for both trainers to fit the screen's width, with a margin each side (Adrien 2026-10-30:
+		// trainers far apart were off screen), never closer than 3 blocks.
+		Minecraft mc = Minecraft.getInstance();
+		double verticalFov = Math.toRadians(mc.options.fov().get());
+		double aspect = mc.getWindow().getWidth() / (double) Math.max(1, mc.getWindow().getHeight());
+		double halfWidth = Math.atan(Math.tan(verticalFov / 2) * aspect);
+		double distance = Math.max(3.0, (gap / 2 + 1.5) / Math.tan(halfWidth)) * push;
+		// A spot that sees both trainers: a far camera may stand behind a wall or under a roof, and entity culling then
+		// hides them (Adrien 2026-10-30: invisible trainers during the intro). Either side, rising if needed.
+		Vec3 position = null;
+		for (double rise : new double[] { 0.5, 3, 6, 10, 16 }) {
+			for (int sign : new int[] { 1, -1 }) {
+				Vec3 candidate = middle.add(side.scale(sign * distance)).add(0, rise, 0);
+				if (!solid(level, candidate) && sees(level, candidate, selfEye, self) && sees(level, candidate, opponentEye, self)) {
+					position = candidate;
+					break;
+				}
+			}
+			if (position != null) {
+				break;
+			}
+		}
+		if (position == null) {
+			Vec3 near = middle.add(side.scale(2.0)).add(0, 0.5, 0);
+			position = solid(level, near) ? middle.add(0, 2.5, 0) : near;
 		}
 		return lookAt(position, middle.add(0, -0.2, 0), true);
 	}
@@ -362,6 +384,52 @@ public final class BattleCinematic {
 		float yaw = (float) Math.toDegrees(Math.atan2(-d.x, d.z));
 		float pitch = (float) -Math.toDegrees(Math.atan2(d.y, Math.sqrt(d.x * d.x + d.z * d.z)));
 		return new CameraPose(position, yaw, pitch, detached);
+	}
+
+	/** Spectacle placed the camera this frame (CameraMixin): no first-person hand in front of the shot. */
+	private static boolean cameraTaken;
+
+	public static void setCameraTaken(boolean taken) {
+		cameraTaken = taken;
+	}
+
+	public static boolean cameraTaken() {
+		return cameraTaken;
+	}
+
+	private static java.lang.reflect.Method cullingTimeout;
+	private static boolean cullingChecked;
+
+	/**
+	 * EntityCulling (in the modpack) decides what is visible in the background, from where the camera was: the camera
+	 * jumping far away for the intro left the trainers hidden (Adrien 2026-10-30). Its own API keeps them drawn a while;
+	 * called by name, Spectacle doesn't need it.
+	 */
+	private static void keepVisible(net.minecraft.world.entity.Entity entity) {
+		if (entity == null) {
+			return;
+		}
+		if (!cullingChecked) {
+			cullingChecked = true;
+			try {
+				cullingTimeout = Class.forName("dev.tr7zw.entityculling.versionless.access.Cullable").getMethod("setTimeout");
+			} catch (ReflectiveOperationException | LinkageError ex) {
+				cullingTimeout = null; // EntityCulling not installed
+			}
+		}
+		if (cullingTimeout != null && cullingTimeout.getDeclaringClass().isInstance(entity)) {
+			try {
+				cullingTimeout.invoke(entity);
+			} catch (ReflectiveOperationException ex) {
+				cullingTimeout = null;
+			}
+		}
+	}
+
+	/** No block in the way from {@code from} to {@code to} (glass and leaves let the eye through). */
+	private static boolean sees(ClientLevel level, Vec3 from, Vec3 to, Player self) {
+		return level.clip(new net.minecraft.world.level.ClipContext(from, to, net.minecraft.world.level.ClipContext.Block.VISUAL,
+				net.minecraft.world.level.ClipContext.Fluid.NONE, self)).getType() == net.minecraft.world.phys.HitResult.Type.MISS;
 	}
 
 	private static boolean solid(ClientLevel level, Vec3 position) {

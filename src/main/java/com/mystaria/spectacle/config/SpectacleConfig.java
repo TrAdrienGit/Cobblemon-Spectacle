@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +20,7 @@ import net.minecraft.util.Mth;
  * The player's settings (phase S3, Adrien 2026-10-29), in {@code config/cobblemon_spectacle.json}: per kind of battle,
  * whether the camera starts staged, whether the intro plays and whether our music plays; and the music's own volume,
  * on top of Minecraft's Music slider. Edited from the settings screen (Mod Menu) and the in-battle player. A missing
- * or broken file means the defaults: everything on, full volume.
+ * or broken file means the defaults: everything on, full volume. Also the trainer's animation profile (phase E2).
  */
 public final class SpectacleConfig {
 
@@ -46,6 +48,8 @@ public final class SpectacleConfig {
 		Battle pvp = new Battle();
 		Battle npc = new Battle();
 		float musicVolume = 1f;
+		/** The trainer's animation profile (phase E2): moment id → animation name; missing = the default one. */
+		Map<String, String> trainerProfile = new HashMap<>();
 	}
 
 	private static Stored stored;
@@ -71,6 +75,15 @@ public final class SpectacleConfig {
 		get().musicVolume = Mth.clamp(volume, 0f, 1f);
 	}
 
+	/** The animation chosen for {@code moment} ({@code guard}, {@code send_out}...), or null for the default. */
+	public static String trainerAnimation(String moment) {
+		return get().trainerProfile.get(moment);
+	}
+
+	public static void setTrainerAnimation(String moment, String animation) {
+		get().trainerProfile.put(moment, animation);
+	}
+
 	private static Stored get() {
 		if (stored == null) {
 			stored = load();
@@ -88,6 +101,7 @@ public final class SpectacleConfig {
 					read.pvp = read.pvp == null ? new Battle() : read.pvp;
 					read.npc = read.npc == null ? new Battle() : read.npc;
 					read.musicVolume = Mth.clamp(read.musicVolume, 0f, 1f);
+					read.trainerProfile = read.trainerProfile == null ? new HashMap<>() : read.trainerProfile;
 					return read;
 				}
 			} catch (IOException | RuntimeException ex) {
