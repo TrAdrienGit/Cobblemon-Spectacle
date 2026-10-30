@@ -60,5 +60,17 @@
   "cobblemon_spectacle.emote.victory_jump": "Jump for joy",
   "cobblemon_spectacle.emote.defeat_slump": "Head down",
   "cobblemon_spectacle.emote.defeat_headshake": "Hand on head",
-  "key.cobblemon_spectacle.menu": "Cobblemon Spectacle menu"
+  "key.cobblemon_spectacle.menu": "Cobblemon Spectacle menu",
+  "cobblemon_spectacle.settings.ambiance": "Battle ambiance",
+  "cobblemon_spectacle.ambiance.none": "None",
+  "cobblemon_spectacle.ambiance.disco": "Disco",
+  "cobblemon_spectacle.ambiance.nature": "Meadow",
+  "cobblemon_spectacle.ambiance.night": "Starry night",
+  "cobblemon_spectacle.ambiance.storm": "Storm",
+  "cobblemon_spectacle.ambiance.spectral": "Spectral",
+  "cobblemon_spectacle.ambiance.fairy": "Fairy tale",
+  "cobblemon_spectacle.ambiance.cosmos": "Cosmos",
+  "cobblemon_spectacle.ambiance.silver_screen": "Silver screen",
+  "cobblemon_spectacle.ambiance.arcade": "Arcade",
+  "cobblemon_spectacle.ambiance.corrupted": "Corrupted"
 }

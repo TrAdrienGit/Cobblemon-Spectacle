@@ -62,9 +62,48 @@ final class PlayerAnimatorEmotes implements EmotePlayer {
 	private ModifierLayer<IAnimation> layer(AbstractClientPlayer player) {
 		return layers.computeIfAbsent(player, ignored -> {
 			ModifierLayer<IAnimation> layer = new ModifierLayer<>();
+			layer.addModifierLast(new NoBendWithShaders());
 			PlayerAnimationAccess.getPlayerAnimLayer(player).addAnimLayer(LAYER_PRIORITY, layer);
 			return layer;
 		});
+	}
+
+	/**
+	 * Elbows and knees bent by bendy-lib turned the outer skin layer black under shader packs (Adrien 2026-10-30,
+	 * Complementary + Euphoria Patches): while one is on (Iris), the limbs stay straight; the rest of the animation plays.
+	 */
+	private static final class NoBendWithShaders extends dev.kosmx.playerAnim.api.layered.modifier.AbstractModifier {
+
+		private static java.lang.reflect.Method inUse;
+		private static Object iris;
+		private static boolean checked;
+
+		@Override
+		public dev.kosmx.playerAnim.core.util.Vec3f get3DTransform(String modelName, dev.kosmx.playerAnim.api.TransformType type,
+				float tickDelta, dev.kosmx.playerAnim.core.util.Vec3f value0) {
+			if (type == dev.kosmx.playerAnim.api.TransformType.BEND && shadersOn()) {
+				return value0;
+			}
+			return super.get3DTransform(modelName, type, tickDelta, value0);
+		}
+
+		private static boolean shadersOn() {
+			if (!checked) {
+				checked = true;
+				try {
+					Class<?> api = Class.forName("net.irisshaders.iris.api.v0.IrisApi");
+					iris = api.getMethod("getInstance").invoke(null);
+					inUse = api.getMethod("isShaderPackInUse");
+				} catch (ReflectiveOperationException | LinkageError ex) {
+					inUse = null; // no Iris: no shader pack
+				}
+			}
+			try {
+				return inUse != null && (boolean) inUse.invoke(iris);
+			} catch (ReflectiveOperationException ex) {
+				return false;
+			}
+		}
 	}
 
 	private static AbstractFadeModifier fade() {

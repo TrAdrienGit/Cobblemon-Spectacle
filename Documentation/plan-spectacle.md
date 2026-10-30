@@ -22,9 +22,9 @@
 | E1 | Emotes : moteur (playerAnimator, facultatif), garde d'attente et moments joués automatiquement (lancer, rappel — un échange = rappel puis lancer —, attaque, victoire, défaite), une animation par moment, `/spectacle preview emote <moment>` ; dresseurs tournés vers l'adversaire | validé 2026-10-30 |
 | E2 | Profil d'animation : variantes `<moment>_<style>` (3 gardes, 3 lancers, 2 rappels, 3 attaques, 3 victoires, 2 défaites ; un pack de ressources peut en ajouter), écran « Profil d'animation du dresseur » (réglages de Spectacle) avec aperçu en boucle sur son propre modèle, choix enregistré dans `config/cobblemon_spectacle.json`, `SpectacleHooks.setTrainerProfiles` pour les autres dresseurs | validé 2026-10-30 |
 | E3 | Phantasmon : profil envoyé au backend à la connexion et à chaque changement (`POST /trainer-profile`), ceux des autres dresseurs récupérés au début du combat et à la demande, gardés une minute (`GET /trainer-profiles`, table `trainer_profiles`, V20) ; menu de Spectacle sur sa seule touche (N) | validé 2026-10-30 |
-| A1 | Ambiances : système (lumière, teinte du ciel, particules, effets aux moments forts, musique facultative), réglage local, API d'ambiance imposée | à faire |
-| A2 | Ambiances de départ : disco, nature, nuit (puis d'autres, façon stades de Battle Revolution) | à faire |
-| A3 | Phantasmon : choix d'une ambiance commune dans le lobby | à faire |
+| A1 | Ambiances : moteur par couches, décrites en JSON (`assets/<ns>/ambiances/*.json`, un pack peut en ajouter) — heure et vitesse du temps, ciel, brouillard, nuages, étoiles, fond qui cache le monde (cosmos) avec étoiles tournantes, arc-en-ciel, projecteurs, particules et vent, blocs flottants, foudre, bruit d'ambiance, filtre d'écran ; réponses aux moments du combat (lancer, attaque, coup critique, K.O., victoire : particules, flash, foudre, son, filtre bref) ; choix dans le menu (N), `SpectacleHooks.setAmbianceOverride`, `/spectacle preview ambiance <id>` | validé 2026-10-30 |
+| A2 | Ambiances de départ (`tools/ambiances.py`) : disco, prairie, nuit étoilée, orage, spectral, féerique, cosmos, vieux film, arcade, corrompu ; filtres d'écran de Spectacle (`tools/filters.py` : noir et blanc, pixels, glitch, ondulation, vieux téléviseur — Minecraft 1.21.1 n'a plus les siens) ; plus tard : effacement du monde (cosmos), failles, taches au sol, stroboscope, aurore en rayons, étoiles filantes et météores, système solaire, vraie pluie | validé 2026-10-30 |
+| A3 | Phantasmon : liste « Ambiance » dans le lobby (l'un ou l'autre joueur choisit, `BattleLobbySetAmbiance`), imposée aux deux au lancement (`BattleSessionStarted.ambiance`, `SpectacleHooks.setAmbianceOverride`) ; pas encore aux spectateurs | fait 2026-10-30 |
 | M1 | Attaques : top d'usage Smogon (National Dex et OU, Gen 9), inventaire de l'existant Cobblemon (136 animations), vérifier si les effets serveur se remplacent côté client ou seulement se complètent | à faire |
 | M2+ | Attaques refaites une par une, par lots, dans l'ordre d'usage | à faire |
 
@@ -46,6 +46,16 @@
 - Intro : les deux dresseurs sont dessinés quelle que soit la distance (`EntityRendererCinematicMixin`), la caméra
   reculant au-delà de la distance d'affichage des entités.
 - `LivingEntityRendererFacingMixin` : pendant le combat, chaque dresseur est dessiné tourné vers son adversaire.
+
+## Reste à faire
+
+- Plan « Vos regards se croisent » : les dresseurs restent invisibles chez Adrien (enregistrement 2026-10-30, 14 à
+  15,5 s : caméra haute sur l'arène, **sans** la boîte de texte de ce plan). Le cadrage a été revu (par-dessus
+  l'épaule au-delà de 16 blocs), sans effet : vérifier si ce plan est bien celui de Spectacle (la boîte de texte
+  manque) — peut-être un autre plan (Phantasmon, `BattleFieldScenes`) avant l'intro ; Adrien testera ailleurs.
+- Sous shaders, coudes et genoux restent droits (bendy-lib noircissait la seconde couche du skin) : à revoir si un
+  moyen de garder les flexions apparaît.
+- Spectateurs d'un combat Ghost : leur transmettre l'ambiance du lobby.
 
 ## Points à vérifier
 

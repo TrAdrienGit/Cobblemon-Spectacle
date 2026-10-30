@@ -18,7 +18,15 @@
 		"LivingEntityRendererFacingMixin",
 		"EmoteBattleInitializeHandlerMixin",
 		"EmoteBattleMessageHandlerMixin",
-		"EntityRendererCinematicMixin"
+		"EntityRendererCinematicMixin",
+		"GameRendererAccessor",
+		"ClientLevelDataAmbianceMixin",
+		"ClientLevelAmbianceMixin",
+		"FogRendererAmbianceMixin",
+		"DimensionSpecialEffectsAmbianceMixin",
+		"LevelWeatherAmbianceMixin",
+		"LevelRendererHideWorldMixin",
+		"BlockEntityRenderDispatcherHideWorldMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

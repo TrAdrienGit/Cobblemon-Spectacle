@@ -315,17 +315,28 @@ public final class BattleCinematic {
 		double gap = axis.length();
 		Vec3 direction = gap < 1.0E-3 ? horizontal(self.getViewVector(partialTick)) : axis.scale(1 / gap);
 		Vec3 side = new Vec3(-direction.z, 0, direction.x);
-		// Far enough back for both trainers to fit the screen's width, with a margin each side (Adrien 2026-10-30:
-		// trainers far apart were off screen), never closer than 3 blocks.
+		// Far apart: over our shoulder, looking at the opponent — a wide side shot made both trainers specks seen from
+		// high up (Adrien's recording 2026-10-30, the "invisible" trainers).
+		if (gap > SIDE_SHOT_MAX_GAP) {
+			Vec3 right = new Vec3(-direction.z, 0, direction.x);
+			Vec3 feet = self.getPosition(partialTick);
+			for (double back : new double[] { 3.2 * push, 2.2, 1.4 }) {
+				Vec3 candidate = feet.subtract(direction.scale(back)).add(right.scale(1.0)).add(0, 2.0, 0);
+				if (!solid(level, candidate)) {
+					return lookAt(candidate, opponentEye.add(0, -0.3, 0), true);
+				}
+			}
+			return lookAt(selfEye.add(0, 0.6, 0), opponentEye, true);
+		}
+		// Close enough: from the side, back far enough for both to fit the screen (12 blocks at most), on the side that
+		// sees both, a little higher if something is in the way.
 		Minecraft mc = Minecraft.getInstance();
 		double verticalFov = Math.toRadians(mc.options.fov().get());
 		double aspect = mc.getWindow().getWidth() / (double) Math.max(1, mc.getWindow().getHeight());
 		double halfWidth = Math.atan(Math.tan(verticalFov / 2) * aspect);
-		double distance = Math.max(3.0, (gap / 2 + 1.5) / Math.tan(halfWidth)) * push;
-		// A spot that sees both trainers: a far camera may stand behind a wall or under a roof, and entity culling then
-		// hides them (Adrien 2026-10-30: invisible trainers during the intro). Either side, rising if needed.
+		double distance = Mth.clamp((gap / 2 + 1.5) / Math.tan(halfWidth), 3.0, 12.0) * push;
 		Vec3 position = null;
-		for (double rise : new double[] { 0.5, 3, 6, 10, 16 }) {
+		for (double rise : new double[] { 0.5, 2.0, 3.5 }) {
 			for (int sign : new int[] { 1, -1 }) {
 				Vec3 candidate = middle.add(side.scale(sign * distance)).add(0, rise, 0);
 				if (!solid(level, candidate) && sees(level, candidate, selfEye, self) && sees(level, candidate, opponentEye, self)) {
@@ -338,11 +349,14 @@ public final class BattleCinematic {
 			}
 		}
 		if (position == null) {
-			Vec3 near = middle.add(side.scale(2.0)).add(0, 0.5, 0);
+			Vec3 near = middle.add(side.scale(Math.min(distance, 4.0))).add(0, 0.5, 0);
 			position = solid(level, near) ? middle.add(0, 2.5, 0) : near;
 		}
 		return lookAt(position, middle.add(0, -0.2, 0), true);
 	}
+
+	/** Beyond this gap between the trainers, the eyes-meet shot is taken over our shoulder instead of from the side. */
+	private static final double SIDE_SHOT_MAX_GAP = 16.0;
 
 	/** Black/White: from the end of the eyes-meet shot, rushing at the opponent's face (or ours if not loaded). */
 	private static CameraPose zoomShot(ClientLevel level, Player self, float partialTick, float progress) {

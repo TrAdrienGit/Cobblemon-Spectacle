@@ -56,20 +56,36 @@ public class CobblemonSpectacle implements ClientModInitializer {
 			BattleMusic.tick();
 			ClassicBattles.tick();
 			com.mystaria.spectacle.emote.TrainerEmotes.tick();
+			com.mystaria.spectacle.ambiance.BattleAmbiance.tick();
 		});
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
 			ClassicBattles.reset();
 			com.mystaria.spectacle.emote.TrainerEmotes.reset();
+			com.mystaria.spectacle.ambiance.BattleAmbiance.end();
 			BattleMusic.stop();
 			BattleCameraDirector.stop();
 			BattleSpectacle.clear();
 			BattleCinematic.stop();
 		});
 		WorldRenderEvents.AFTER_ENTITIES.register(BattleCinematic::renderWorld);
-		HudRenderCallback.EVENT.register((graphics, tickCounter) -> BattleCinematic.renderHud(graphics));
+		WorldRenderEvents.AFTER_ENTITIES.register(com.mystaria.spectacle.ambiance.BattleAmbiance::render);
+		HudRenderCallback.EVENT.register((graphics, tickCounter) -> {
+			com.mystaria.spectacle.ambiance.BattleAmbiance.renderHud(graphics);
+			BattleCinematic.renderHud(graphics);
+		});
+		com.mystaria.spectacle.ambiance.Ambiances.register();
 		BattleScreenButtons.register();
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(
 				ClientCommandManager.literal("spectacle").then(ClientCommandManager.literal("preview")
+						.then(ClientCommandManager.literal("ambiance")
+								.then(ClientCommandManager.argument("ambiance", net.minecraft.commands.arguments.ResourceLocationArgument.id())
+										.suggests((context, builder) -> SharedSuggestionProvider.suggest(
+												com.mystaria.spectacle.ambiance.Ambiances.ids(), builder))
+										.executes(context -> {
+											String id = context.getArgument("ambiance", net.minecraft.resources.ResourceLocation.class).toString();
+											Minecraft.getInstance().tell(() -> com.mystaria.spectacle.ambiance.BattleAmbiance.preview(id));
+											return Command.SINGLE_SUCCESS;
+										})))
 						.then(ClientCommandManager.literal("emote")
 								.then(ClientCommandManager.argument("moment", StringArgumentType.word())
 										.suggests((context, builder) -> SharedSuggestionProvider.suggest(Arrays.stream(

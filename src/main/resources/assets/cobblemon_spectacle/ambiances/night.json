@@ -1,0 +1,59 @@
+{
+	"time": {
+		"at": 18000,
+		"speed": 0
+	},
+	"sky": {
+		"sky_color": "#0b1a3a",
+		"fog_color": "#0f1d36",
+		"strength": 0.75,
+		"stars": 1.0
+	},
+	"aurora": {
+		"colors": [
+			"#3dff9a",
+			"#38e0ff",
+			"#a24bff"
+		],
+		"height": 36,
+		"alpha": 100
+	},
+	"shooting_stars": {
+		"rate": 0.05,
+		"color": "#e8f0ff"
+	},
+	"particles": [
+		{
+			"type": "minecraft:glow",
+			"rate": 0.5,
+			"area": "field",
+			"motion": [
+				0,
+				0.01,
+				0
+			],
+			"spread": 0.03
+		},
+		{
+			"type": "minecraft:white_ash",
+			"rate": 2,
+			"area": "air"
+		}
+	],
+	"moments": {
+		"crit": {
+			"particle": "minecraft:electric_spark",
+			"count": 40,
+			"flash": "#9fc4ff"
+		},
+		"faint": {
+			"particle": "minecraft:glow",
+			"count": 30
+		},
+		"victory": {
+			"particle": "minecraft:end_rod",
+			"count": 80,
+			"sound": "minecraft:block.amethyst_block.chime"
+		}
+	}
+}

@@ -1,0 +1,74 @@
+{
+	"time": {
+		"at": 1500,
+		"speed": 1
+	},
+	"sky": {
+		"sky_color": "#8fd3ff",
+		"fog_color": "#cfe9c8",
+		"strength": 0.5
+	},
+	"wind": [
+		0.03,
+		0.01
+	],
+	"spotlights": {
+		"count": 5,
+		"colors": [
+			"#fff2b0",
+			"#ffe9a0"
+		],
+		"sweep": 1,
+		"height": 40,
+		"width": 1.6,
+		"from_sky": true
+	},
+	"particles": [
+		{
+			"type": "minecraft:cherry_leaves",
+			"rate": 2.5,
+			"area": "air"
+		},
+		{
+			"type": "minecraft:cherry_leaves",
+			"rate": 1.0,
+			"area": "sky"
+		},
+		{
+			"type": "minecraft:spore_blossom_air",
+			"rate": 3,
+			"area": "field"
+		},
+		{
+			"type": "minecraft:falling_spore_blossom",
+			"rate": 0.8,
+			"area": "sky"
+		},
+		{
+			"type": "minecraft:happy_villager",
+			"rate": 0.3,
+			"area": "field"
+		}
+	],
+	"moments": {
+		"attack": {
+			"particle": "minecraft:happy_villager",
+			"count": 8
+		},
+		"crit": {
+			"particle": "minecraft:cherry_leaves",
+			"count": 60,
+			"flash": "#fff6c8",
+			"sound": "minecraft:block.cherry_leaves.break"
+		},
+		"faint": {
+			"particle": "minecraft:composter",
+			"count": 30
+		},
+		"victory": {
+			"particle": "minecraft:cherry_leaves",
+			"count": 150,
+			"sound": "minecraft:entity.player.levelup"
+		}
+	}
+}

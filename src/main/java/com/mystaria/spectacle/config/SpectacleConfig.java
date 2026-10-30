@@ -50,6 +50,8 @@ public final class SpectacleConfig {
 		float musicVolume = 1f;
 		/** The trainer's animation profile (phase E2): moment id → animation name; missing = the default one. */
 		Map<String, String> trainerProfile = new HashMap<>();
+		/** The battle ambiance chosen (phase A1), an id {@code namespace:name}, or "none". */
+		String ambiance = "none";
 	}
 
 	private static Stored stored;
@@ -82,6 +84,15 @@ public final class SpectacleConfig {
 
 	public static void setTrainerAnimation(String moment, String animation) {
 		get().trainerProfile.put(moment, animation);
+	}
+
+	public static String ambiance() {
+		String id = get().ambiance;
+		return id == null ? "none" : id;
+	}
+
+	public static void setAmbiance(String id) {
+		get().ambiance = id;
 	}
 
 	/** A copy of the whole profile. */

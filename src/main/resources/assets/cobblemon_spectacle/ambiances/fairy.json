@@ -1,0 +1,78 @@
+{
+	"time": {
+		"at": 0,
+		"speed": 30
+	},
+	"sky": {
+		"sky_color": "#ffc3e6",
+		"fog_color": "#ffe0f2",
+		"strength": 0.6,
+		"cloud_color": "#ffd6ee"
+	},
+	"rainbow": {
+		"radius": 34,
+		"alpha": 0.5
+	},
+	"floating_blocks": {
+		"block": "minecraft:amethyst_cluster",
+		"count": 7,
+		"radius": [
+			11,
+			17
+		],
+		"height": [
+			5,
+			10
+		],
+		"bob": 0.6,
+		"orbit": 0.6
+	},
+	"wind": [
+		0.01,
+		0.0
+	],
+	"particles": [
+		{
+			"type": "minecraft:spore_blossom_air",
+			"rate": 1.5,
+			"area": "air"
+		},
+		{
+			"type": "minecraft:wax_on",
+			"rate": 1.0,
+			"area": "field"
+		},
+		{
+			"type": "minecraft:end_rod",
+			"rate": 0.3,
+			"area": "air",
+			"motion": [
+				0,
+				0.02,
+				0
+			]
+		}
+	],
+	"moments": {
+		"send_out": {
+			"particle": "minecraft:wax_on",
+			"count": 30,
+			"sound": "minecraft:block.amethyst_block.chime"
+		},
+		"attack": {
+			"particle": "minecraft:wax_off",
+			"count": 12
+		},
+		"crit": {
+			"particle": "minecraft:end_rod",
+			"count": 50,
+			"flash": "#ffd1f0",
+			"sound": "minecraft:block.amethyst_cluster.break"
+		},
+		"victory": {
+			"particle": "minecraft:totem_of_undying",
+			"count": 120,
+			"sound": "minecraft:ui.toast.challenge_complete"
+		}
+	}
+}

@@ -122,6 +122,20 @@ public final class SpectacleHooks {
 		trainersListener.accept(trainers);
 	}
 
+	private static java.util.function.Supplier<String> ambianceOverride = () -> null;
+
+	/**
+	 * The battle ambiance imposed on the battle starting (phase A1), over the player's own choice: Phantasmon's lobby
+	 * (one ambiance for both players), Phantasmon Events' scripted matches. Null: the player's choice.
+	 */
+	public static void setAmbianceOverride(java.util.function.Supplier<String> override) {
+		ambianceOverride = override;
+	}
+
+	public static String ambianceOverride() {
+		return ambianceOverride.get();
+	}
+
 	public static void addButton(BattleButton button) {
 		buttons.add(button);
 		buttons.sort(Comparator.comparingInt(BattleButton::order));

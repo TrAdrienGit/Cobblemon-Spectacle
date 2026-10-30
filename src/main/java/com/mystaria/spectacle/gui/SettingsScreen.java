@@ -50,10 +50,21 @@ public final class SettingsScreen extends Screen {
 		addRenderableWidget(new MusicScreen.VolumeSlider(center - 154, y + 8, 150, 20));
 		addRenderableWidget(Button.builder(Component.translatable("cobblemon_spectacle.settings.tracks"),
 				b -> minecraft.setScreen(SpectacleHooks.musicScreen(this))).bounds(center + 4, y + 8, 150, 20).build());
+		java.util.List<String> ambiances = new java.util.ArrayList<>();
+		ambiances.add(com.mystaria.spectacle.ambiance.BattleAmbiance.NONE);
+		ambiances.addAll(com.mystaria.spectacle.ambiance.Ambiances.ids());
+		String current = ambiances.contains(SpectacleConfig.ambiance()) ? SpectacleConfig.ambiance() : ambiances.get(0);
+		addRenderableWidget(CycleButton.<String>builder(SettingsScreen::ambianceName).withValues(ambiances).withInitialValue(current)
+				.create(center - 154, y + 32 + 24, 308, 20, Component.translatable("cobblemon_spectacle.settings.ambiance"),
+						(button, value) -> SpectacleConfig.setAmbiance(value)));
 		addRenderableWidget(Button.builder(Component.translatable("cobblemon_spectacle.settings.profile"),
 				b -> minecraft.setScreen(new TrainerProfileScreen(this))).bounds(center - 154, y + 32, 308, 20).build());
 		addRenderableWidget(Button.builder(Component.translatable("gui.done"), b -> onClose())
-				.bounds(center - 50, y + 64, 100, 20).build());
+				.bounds(center - 50, y + 64 + 24, 100, 20).build());
+	}
+
+	static Component ambianceName(String id) {
+		return com.mystaria.spectacle.ambiance.Ambiances.displayName(id);
 	}
 
 	@Override

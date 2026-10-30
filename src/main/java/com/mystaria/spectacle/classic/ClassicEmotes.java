@@ -46,6 +46,8 @@ public final class ClassicEmotes {
 		addSide(trainers, packet.getSide1(), packet.getSide2());
 		addSide(trainers, packet.getSide2(), packet.getSide1());
 		TrainerEmotes.start(trainers);
+		com.mystaria.spectacle.ambiance.BattleAmbiance.start(trainers.keySet());
+		com.mystaria.spectacle.ambiance.BattleAmbiance.moment("send_out");
 	}
 
 	/** The side's player trainers, each facing the other side's trainers. */
@@ -74,8 +76,10 @@ public final class ClassicEmotes {
 			ClientBattlePokemon leaving = found.getSecond().getBattlePokemon();
 			if (leaving != null && leaving.getHpValue() > 0) {
 				TrainerEmotes.act(actor.getUuid(), Moment.RECALL, Moment.SEND_OUT);
+				com.mystaria.spectacle.ambiance.BattleAmbiance.moment("send_out");
 			} else {
 				TrainerEmotes.act(actor.getUuid(), Moment.SEND_OUT);
+				com.mystaria.spectacle.ambiance.BattleAmbiance.moment("send_out");
 			}
 		} catch (RuntimeException ex) {
 			LOG.debug("No trainer emote for the switch at {}", pnx, ex);
@@ -97,12 +101,21 @@ public final class ClassicEmotes {
 
 	public static void onEnd() {
 		TrainerEmotes.end();
+		com.mystaria.spectacle.ambiance.BattleAmbiance.end();
 	}
 
 	private static void onMessage(String key, Object[] args) {
 		switch (key) {
-			case "cobblemon.battle.used_move", "cobblemon.battle.used_move_on" -> TrainerEmotes.act(trainerOfUser(args), Moment.ATTACK);
-			case "cobblemon.battle.win" -> outcome(args, true);
+			case "cobblemon.battle.used_move", "cobblemon.battle.used_move_on" -> {
+				TrainerEmotes.act(trainerOfUser(args), Moment.ATTACK);
+				com.mystaria.spectacle.ambiance.BattleAmbiance.moment("attack");
+			}
+			case "cobblemon.battle.crit", "cobblemon.battle.crit_spread" -> com.mystaria.spectacle.ambiance.BattleAmbiance.moment("crit");
+			case "cobblemon.battle.fainted" -> com.mystaria.spectacle.ambiance.BattleAmbiance.moment("faint");
+			case "cobblemon.battle.win" -> {
+				outcome(args, true);
+				com.mystaria.spectacle.ambiance.BattleAmbiance.moment("victory");
+			}
 			case "cobblemon.battle.forfeit" -> outcome(args, false);
 			default -> {
 			}
