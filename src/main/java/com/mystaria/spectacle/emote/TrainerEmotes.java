@@ -172,6 +172,7 @@ public final class TrainerEmotes {
 			state.opponents = List.copyOf(opponents);
 			state.queue.add(Moment.SEND_OUT);
 		});
+		SpectacleHooks.trainersStarting(trainers.keySet());
 		LOG.debug("Trainer emotes: battle with {} player trainer(s) {}", trainers.size(), trainers.keySet());
 	}
 

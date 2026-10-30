@@ -101,7 +101,7 @@ public final class ClassicEmotes {
 
 	private static void onMessage(String key, Object[] args) {
 		switch (key) {
-			case "cobblemon.battle.used_move", "cobblemon.battle.used_move_on" -> TrainerEmotes.act(trainerOf(ClassicBattles.pnxNamed(args, 0)), Moment.ATTACK);
+			case "cobblemon.battle.used_move", "cobblemon.battle.used_move_on" -> TrainerEmotes.act(trainerOfUser(args), Moment.ATTACK);
 			case "cobblemon.battle.win" -> outcome(args, true);
 			case "cobblemon.battle.forfeit" -> outcome(args, false);
 			default -> {
@@ -125,6 +125,33 @@ public final class ClassicEmotes {
 				TrainerEmotes.act(actor.getUuid(), named == namedWin ? Moment.VICTORY : Moment.DEFEAT);
 			}
 		}
+	}
+
+	/**
+	 * The trainer of the Pokémon named by a move message's first argument: a player's Pokémon is named "X's Pokémon"
+	 * ({@code cobblemon.battle.owned_pokemon}, the owner first — Adrien's test 2026-10-30: comparing that with the
+	 * Pokémon's own name never matched), any other by its name alone.
+	 */
+	private static UUID trainerOfUser(Object[] args) {
+		if (args.length == 0) {
+			return null;
+		}
+		if (args[0] instanceof Component component && component.getContents() instanceof TranslatableContents owned
+				&& "cobblemon.battle.owned_pokemon".equals(owned.getKey()) && owned.getArgs().length > 0) {
+			Object owner = owned.getArgs()[0];
+			String ownerName = owner instanceof Component c ? c.getString() : String.valueOf(owner);
+			ClientBattle battle = CobblemonClient.INSTANCE.getBattle();
+			if (battle != null) {
+				for (ClientBattleSide side : battle.getSides()) {
+					for (ClientBattleActor actor : side.getActors()) {
+						if (actor.getDisplayName().getString().equals(ownerName)) {
+							return actor.getUuid();
+						}
+					}
+				}
+			}
+		}
+		return trainerOf(ClassicBattles.pnxNamed(args, 0));
 	}
 
 	/** The trainer of the Pokémon at {@code pnx} ({@code p1a}…), or null. */

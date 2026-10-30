@@ -13,7 +13,6 @@
   "cobblemon_spectacle.preview.no_pokemon": "[Spectacle] Aucun Pokémon à moins de 24 blocs.",
   "cobblemon_spectacle.music.now_playing": "♪ %s",
   "key.categories.cobblemon_spectacle": "Cobblemon Spectacle",
-  "key.cobblemon_spectacle.music_menu": "Menu des musiques",
   "cobblemon_spectacle.player.none": "♪ Pas de musique",
   "cobblemon_spectacle.music.screen.title": "Musiques de combat",
   "cobblemon_spectacle.music.tab.lobby": "Lobby",
@@ -60,5 +59,6 @@
   "cobblemon_spectacle.emote.victory_wave": "Salut à la foule",
   "cobblemon_spectacle.emote.victory_jump": "Saut de joie",
   "cobblemon_spectacle.emote.defeat_slump": "Tête basse",
-  "cobblemon_spectacle.emote.defeat_headshake": "Main sur la tête"
+  "cobblemon_spectacle.emote.defeat_headshake": "Main sur la tête",
+  "key.cobblemon_spectacle.menu": "Menu de Cobblemon Spectacle"
 }

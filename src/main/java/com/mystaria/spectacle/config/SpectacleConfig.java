@@ -84,6 +84,11 @@ public final class SpectacleConfig {
 		get().trainerProfile.put(moment, animation);
 	}
 
+	/** A copy of the whole profile. */
+	public static Map<String, String> trainerProfile() {
+		return Map.copyOf(get().trainerProfile);
+	}
+
 	private static Stored get() {
 		if (stored == null) {
 			stored = load();

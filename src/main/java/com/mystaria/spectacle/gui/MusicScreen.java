@@ -18,7 +18,7 @@ import com.mystaria.spectacle.config.SpectacleConfig;
 /**
  * Spectacle's own music menu (Adrien 2026-10-29: for players without Phantasmon, which brings its own): one tab per
  * folder of the resource pack, each file ticked or not (unticked files are never picked) and playable, the music
- * volume. Plain Minecraft widgets. Opened with the music key (N), from the settings screen, or by Mod Menu.
+ * volume. Plain Minecraft widgets. Opened from Spectacle's menu (key N), the settings screen, or by Mod Menu.
  */
 public final class MusicScreen extends Screen {
 

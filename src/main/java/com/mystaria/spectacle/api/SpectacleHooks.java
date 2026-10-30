@@ -72,7 +72,7 @@ public final class SpectacleHooks {
 	}
 
 	/**
-	 * The music menu opened by Spectacle's music key and settings screen: Spectacle's own by default; Phantasmon gives
+	 * The music menu opened from Spectacle's menu (key N): Spectacle's own by default; Phantasmon gives
 	 * its own (same settings and files, Phantasmon's look).
 	 */
 	public static void setMusicScreen(java.util.function.Function<net.minecraft.client.gui.screens.Screen, net.minecraft.client.gui.screens.Screen> factory) {
@@ -94,6 +94,32 @@ public final class SpectacleHooks {
 
 	public static String trainerAnimation(UUID trainer, String moment) {
 		return trainerProfiles.apply(trainer, moment);
+	}
+
+	private static java.util.function.Consumer<java.util.Map<String, String>> localProfileListener = profile -> { };
+	private static java.util.function.Consumer<java.util.Collection<UUID>> trainersListener = trainers -> { };
+
+	/** Told the local player's profile (moment id → animation) at startup and whenever they change it: Phantasmon sends it. */
+	public static void setLocalProfileListener(java.util.function.Consumer<java.util.Map<String, String>> listener) {
+		localProfileListener = listener;
+	}
+
+	/** The local player's animation profile, moment id → animation (moments left on the default are absent). */
+	public static java.util.Map<String, String> localTrainerProfile() {
+		return com.mystaria.spectacle.config.SpectacleConfig.trainerProfile();
+	}
+
+	public static void localProfileChanged() {
+		localProfileListener.accept(localTrainerProfile());
+	}
+
+	/** Told the player trainers of a battle as it starts, so their profiles can be fetched before they act. */
+	public static void setTrainersListener(java.util.function.Consumer<java.util.Collection<UUID>> listener) {
+		trainersListener = listener;
+	}
+
+	public static void trainersStarting(java.util.Collection<UUID> trainers) {
+		trainersListener.accept(trainers);
 	}
 
 	public static void addButton(BattleButton button) {

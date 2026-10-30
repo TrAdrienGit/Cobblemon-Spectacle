@@ -13,7 +13,6 @@
   "cobblemon_spectacle.preview.no_pokemon": "[Spectacle] No Pokémon within 24 blocks.",
   "cobblemon_spectacle.music.now_playing": "♪ %s",
   "key.categories.cobblemon_spectacle": "Cobblemon Spectacle",
-  "key.cobblemon_spectacle.music_menu": "Music menu",
   "cobblemon_spectacle.player.none": "♪ No music",
   "cobblemon_spectacle.music.screen.title": "Battle music",
   "cobblemon_spectacle.music.tab.lobby": "Lobby",
@@ -60,5 +59,6 @@
   "cobblemon_spectacle.emote.victory_wave": "Wave to the crowd",
   "cobblemon_spectacle.emote.victory_jump": "Jump for joy",
   "cobblemon_spectacle.emote.defeat_slump": "Head down",
-  "cobblemon_spectacle.emote.defeat_headshake": "Hand on head"
+  "cobblemon_spectacle.emote.defeat_headshake": "Hand on head",
+  "key.cobblemon_spectacle.menu": "Cobblemon Spectacle menu"
 }

@@ -55,6 +55,7 @@ public final class TrainerProfileScreen extends Screen {
 				Component label = name.equals(chosen) ? Component.literal("▶ ").append(label(name)) : label(name);
 				addRenderableWidget(Button.builder(label, b -> {
 					SpectacleConfig.setTrainerAnimation(moment.id(), name);
+					com.mystaria.spectacle.api.SpectacleHooks.localProfileChanged();
 					rebuildWidgets();
 					preview();
 				}).bounds(listX, 66 + i * ROW_H, LIST_W, 20).build());

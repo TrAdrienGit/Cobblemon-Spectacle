@@ -397,6 +397,19 @@ public final class BattleCinematic {
 		return cameraTaken;
 	}
 
+	/**
+	 * {@code EntityRendererCinematicMixin}: the two trainers are drawn during the intro whatever the distance — the
+	 * camera backs far off to fit them both, beyond the game's entity distance (Adrien 2026-10-30: both invisible).
+	 */
+	public static boolean forcedVisible(net.minecraft.world.entity.Entity entity) {
+		if (!introPlaying() || !(entity instanceof Player)) {
+			return false;
+		}
+		Minecraft mc = Minecraft.getInstance();
+		return entity == mc.player || entity.getUUID().equals(opponentUuid)
+				|| entity == com.mystaria.spectacle.api.SpectacleHooks.player(mc.level, opponentUuid);
+	}
+
 	private static java.lang.reflect.Method cullingTimeout;
 	private static boolean cullingChecked;
 

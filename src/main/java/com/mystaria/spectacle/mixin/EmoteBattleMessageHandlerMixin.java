@@ -14,10 +14,11 @@ import com.mystaria.spectacle.classic.ClassicEmotes;
 
 /**
  * The battle's messages (moves ordered, winners) for the trainers' emotes, read <b>before</b> Cobblemon's handler:
- * DeltaClient may cancel it on the Cobblemon Academy server. Applied after DeltaClient's (higher priority), so this
- * head injection comes first.
+ * DeltaClient always cancels it on the Cobblemon Academy server (it queues the messages its own way). Injections at the
+ * head run in the order their mixins are applied, lowest priority first: below DeltaClient's (1000), this one runs
+ * before its cancel (Adrien's test 2026-10-30: at 1500 no attack nor victory was ever seen).
  */
-@Mixin(value = BattleMessageHandler.class, remap = false, priority = 1500)
+@Mixin(value = BattleMessageHandler.class, remap = false, priority = 500)
 public abstract class EmoteBattleMessageHandlerMixin {
 
 	@Inject(method = "handle(Lcom/cobblemon/mod/common/net/messages/client/battle/BattleMessagePacket;Lnet/minecraft/client/Minecraft;)V", at = @At("HEAD"))
