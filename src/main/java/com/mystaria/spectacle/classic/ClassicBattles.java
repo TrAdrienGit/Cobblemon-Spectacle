@@ -255,7 +255,7 @@ public final class ClassicBattles {
 	}
 
 	/** The battle position of the active Pokémon named by the message's argument {@code index}, or null. */
-	private static String pnxNamed(Object[] args, int index) {
+	static String pnxNamed(Object[] args, int index) {
 		if (args.length <= index) {
 			return null;
 		}

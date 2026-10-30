@@ -32,5 +32,7 @@
   "cobblemon_spectacle.settings.tracks": "Choose the music…",
   "cobblemon_spectacle.settings.kind.ghost": "Phantasmon battle",
   "cobblemon_spectacle.settings.kind.pvp": "Player vs player",
-  "cobblemon_spectacle.settings.kind.npc": "NPC trainer"
+  "cobblemon_spectacle.settings.kind.npc": "NPC trainer",
+  "cobblemon_spectacle.preview.unknown_emote": "Unknown moment: %s (guard, send_out, recall, attack, victory, defeat).",
+  "cobblemon_spectacle.preview.no_emotes": "The trainers' emotes need Emotecraft (playerAnimator)."
 }

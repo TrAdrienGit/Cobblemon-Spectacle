@@ -32,5 +32,7 @@
   "cobblemon_spectacle.settings.tracks": "Choisir les musiques…",
   "cobblemon_spectacle.settings.kind.ghost": "Combat Phantasmon",
   "cobblemon_spectacle.settings.kind.pvp": "Joueur contre joueur",
-  "cobblemon_spectacle.settings.kind.npc": "Dresseur PNJ"
+  "cobblemon_spectacle.settings.kind.npc": "Dresseur PNJ",
+  "cobblemon_spectacle.preview.unknown_emote": "Moment inconnu : %s (guard, send_out, recall, attack, victory, defeat).",
+  "cobblemon_spectacle.preview.no_emotes": "Les emotes des dresseurs demandent Emotecraft (playerAnimator)."
 }

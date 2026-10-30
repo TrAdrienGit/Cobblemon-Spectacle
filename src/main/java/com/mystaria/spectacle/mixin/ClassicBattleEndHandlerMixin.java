@@ -11,6 +11,7 @@ import com.cobblemon.mod.common.net.messages.client.battle.BattleEndPacket;
 import net.minecraft.client.Minecraft;
 
 import com.mystaria.spectacle.classic.ClassicBattles;
+import com.mystaria.spectacle.classic.ClassicEmotes;
 
 /** The battle is over: camera, set pieces and music stop ({@link ClassicBattles}), once Cobblemon's own handler has run. */
 @Mixin(value = BattleEndHandler.class, remap = false)
@@ -19,5 +20,6 @@ public abstract class ClassicBattleEndHandlerMixin {
 	@Inject(method = "handle(Lcom/cobblemon/mod/common/net/messages/client/battle/BattleEndPacket;Lnet/minecraft/client/Minecraft;)V", at = @At("RETURN"))
 	private void spectacle$stage(BattleEndPacket packet, Minecraft client, CallbackInfo ci) {
 		ClassicBattles.onEnd();
+		ClassicEmotes.onEnd();
 	}
 }

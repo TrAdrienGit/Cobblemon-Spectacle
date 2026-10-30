@@ -30,7 +30,7 @@ import com.mystaria.spectacle.classic.ClassicBattles;
 
 /**
  * Cobblemon Spectacle: the staging of battles (camera, intros, set pieces, music), on its own or for Phantasmon. Wires
- * the tick, the render passes, the battle screen's buttons and {@code /spectacle preview}.
+ * the tick, the render passes, the battle screen's buttons, the trainers' emotes and {@code /spectacle preview}.
  */
 public class CobblemonSpectacle implements ClientModInitializer {
 
@@ -52,9 +52,11 @@ public class CobblemonSpectacle implements ClientModInitializer {
 			BattleSpectacle.tick();
 			BattleMusic.tick();
 			ClassicBattles.tick();
+			com.mystaria.spectacle.emote.TrainerEmotes.tick();
 		});
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
 			ClassicBattles.reset();
+			com.mystaria.spectacle.emote.TrainerEmotes.reset();
 			BattleMusic.stop();
 			BattleCameraDirector.stop();
 			BattleSpectacle.clear();
@@ -65,6 +67,11 @@ public class CobblemonSpectacle implements ClientModInitializer {
 		BattleScreenButtons.register();
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(
 				ClientCommandManager.literal("spectacle").then(ClientCommandManager.literal("preview")
+						.then(ClientCommandManager.literal("emote")
+								.then(ClientCommandManager.argument("moment", StringArgumentType.word())
+										.suggests((context, builder) -> SharedSuggestionProvider.suggest(Arrays.stream(
+												com.mystaria.spectacle.emote.TrainerEmotes.Moment.values()).map(m -> m.id()), builder))
+										.executes(context -> emote(context.getSource(), StringArgumentType.getString(context, "moment")))))
 						.then(ClientCommandManager.literal("intro")
 								.then(ClientCommandManager.argument("intro", StringArgumentType.word())
 										.suggests((context, builder) -> SharedSuggestionProvider.suggest(Arrays.stream(BattleCinematic.Intro.values())
@@ -77,6 +84,22 @@ public class CobblemonSpectacle implements ClientModInitializer {
 										.suggests((context, builder) -> SharedSuggestionProvider.suggest(TYPES, builder))
 										.executes(context -> setPiece(context.getSource(), StringArgumentType.getString(context, "kind"),
 												StringArgumentType.getString(context, "type"))))))));
+	}
+
+	/** {@code /spectacle preview emote <moment>}: a trainer's animation on the player themselves (third person). */
+	private static int emote(FabricClientCommandSource source, String name) {
+		var moment = Arrays.stream(com.mystaria.spectacle.emote.TrainerEmotes.Moment.values())
+				.filter(m -> m.id().equalsIgnoreCase(name)).findFirst().orElse(null);
+		if (moment == null) {
+			source.sendError(Component.translatable("cobblemon_spectacle.preview.unknown_emote", name));
+			return 0;
+		}
+		if (!com.mystaria.spectacle.emote.TrainerEmotes.available()) {
+			source.sendError(Component.translatable("cobblemon_spectacle.preview.no_emotes"));
+			return 0;
+		}
+		Minecraft.getInstance().tell(() -> com.mystaria.spectacle.emote.TrainerEmotes.preview(moment));
+		return Command.SINGLE_SUCCESS;
 	}
 
 	/** {@code /spectacle preview intro <name>}: one of the battle intros alone. */

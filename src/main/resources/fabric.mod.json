@@ -26,5 +26,8 @@
 		"java": ">=21",
 		"fabric-api": "*",
 		"cobblemon": ">=1.8.1"
+	},
+	"suggests": {
+		"playeranimator": "*"
 	}
 }

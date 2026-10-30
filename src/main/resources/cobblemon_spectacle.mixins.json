@@ -14,7 +14,10 @@
 		"ClassicBattleFaintHandlerMixin",
 		"ClassicBattleMessageHandlerMixin",
 		"ClassicBattleEndHandlerMixin",
-		"ClassicBattleMusicHandlerMixin"
+		"ClassicBattleMusicHandlerMixin",
+		"LivingEntityRendererFacingMixin",
+		"EmoteBattleInitializeHandlerMixin",
+		"EmoteBattleMessageHandlerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
